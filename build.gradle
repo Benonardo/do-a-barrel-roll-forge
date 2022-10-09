@@ -11,6 +11,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -138,6 +139,10 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+configurations {
+    shade
+}
+
 dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
@@ -146,7 +151,8 @@ dependencies {
 
     implementation(fg.deobf("me.shedaniel.cloth:cloth-config-forge:${project.cloth_config_version}"))
 
-    implementation("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}")
+    minecraftLibrary("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}")
+    shade("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}")
 
     annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -183,9 +189,21 @@ jar {
     }
 }
 
+shadowJar {
+    classifier = ''
+    configurations = [project.configurations.shade]
+    relocate 'com.llamalad7.mixinextras', "nl.enjarai.doabarrelroll.mixinextras" // ensure repackaged packages have unique names
+}
+
+reobf {
+    shadowJar { }
+}
+
+tasks.build.dependsOn reobfShadowJar
+
 // Example configuration to allow publishing using the maven-publish plugin
 // This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar')
+jar.finalizedBy('reobfShadowJar')
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 // publish.dependsOn('reobfJar')
 

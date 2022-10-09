@@ -1,5 +1,6 @@
 package nl.enjarai.doabarrelroll;
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -11,7 +12,7 @@ public class DoABarrelRollMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-
+        MixinExtrasBootstrap.init();
     }
 
     @Override
