@@ -192,6 +192,7 @@ jar {
 shadowJar {
     classifier = ''
     configurations = [project.configurations.shade]
+    exclude "META-INF/**"
     relocate 'com.llamalad7.mixinextras', "nl.enjarai.doabarrelroll.mixinextras" // ensure repackaged packages have unique names
 }
 
